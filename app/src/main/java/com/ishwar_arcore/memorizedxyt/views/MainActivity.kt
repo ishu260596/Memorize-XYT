@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.util.Log
+import android.os.Vibrator
 import android.view.*
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -29,8 +29,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvNumMoves: TextView
     private lateinit var tvNumPairs: TextView
 
-    //    private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var audioManager: AudioManager
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var vibe: Vibrator
 
     private lateinit var adapter: MemoryBoardAdapter
     private lateinit var memoryGame: MemoryGame
@@ -115,10 +115,8 @@ class MainActivity : AppCompatActivity() {
         rvBoard = findViewById(R.id.rvBoard)
         tvNumMoves = findViewById(R.id.tvNumMoves)
         tvNumPairs = findViewById(R.id.tvNumPairs)
-//        mediaPlayer = MediaPlayer.create(this, R.raw.)
-
-        audioManager = this.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
+        vibe = getSystemService(VIBRATOR_SERVICE) as Vibrator
+        mediaPlayer = MediaPlayer.create(this, R.raw.click)
         setUpBoard()
     }
 
@@ -145,7 +143,7 @@ class MainActivity : AppCompatActivity() {
         adapter = MemoryBoardAdapter(this, boardSize, memoryGame.cards,
             object : MemoryBoardAdapter.CardClickListener {
                 override fun onCardClick(position: Int) {
-                    audioManager.playSoundEffect(SoundEffectConstants.CLICK)
+                    mediaPlayer.start()
                     updateGameFlip(position)
                 }
             })
@@ -157,11 +155,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateGameFlip(position: Int) {
         if (memoryGame.haveWonTehGame()) {
+            vibe.vibrate(100)
             Snackbar.make(clRoot, "You already won", Snackbar.LENGTH_LONG).show()
             return
         }
 
         if (memoryGame.isCardFlipUp(position)) {
+            vibe.vibrate(100)
+            mediaPlayer.pause()
             Snackbar.make(clRoot, "Invalid move", Snackbar.LENGTH_SHORT).show()
             return
         }
@@ -175,6 +176,7 @@ class MainActivity : AppCompatActivity() {
             ) as Int
             tvNumPairs.setTextColor(color)
             if (memoryGame.haveWonTehGame()) {
+                vibe.vibrate(800)
                 showConfetti()
                 Snackbar.make(clRoot, "You won! Congratulations", Snackbar.LENGTH_LONG).show()
             }
@@ -184,7 +186,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showConfetti() {
-
         CommonConfetti.rainingConfetti(
             clRoot, intArrayOf(
                 Color.BLUE,
