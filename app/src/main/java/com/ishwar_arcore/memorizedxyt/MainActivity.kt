@@ -2,13 +2,14 @@ package com.ishwar_arcore.memorizedxyt
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
-import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ishwar_arcore.memorizedxyt.model.BoardSize
-import com.ishwar_arcore.memorizedxyt.utils.DEFAULT_ICONS
+import com.ishwar_arcore.memorizedxyt.model.MemoryCard
+import com.ishwar_arcore.memorizedxyt.model.MemoryGame
 import com.ishwar_arcore.memorizedxyt.views.MemoryBoardAdapter
 
 class MainActivity : AppCompatActivity() {
@@ -19,9 +20,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvNumPairs: TextView
 
     private lateinit var adapter: MemoryBoardAdapter
+    private lateinit var memoryGame: MemoryGame
 
 
-    private var boardSize: BoardSize = BoardSize.MEDIUM
+    private var boardSize: BoardSize = BoardSize.EASY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,31 +33,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setRecyclerView() {
-        val chosenImages = DEFAULT_ICONS.shuffled().take(boardSize.getPairs())
-        val randomizedImages = (chosenImages + chosenImages).shuffled()
 
+        memoryGame = MemoryGame(boardSize)
 
-
-        adapter = MemoryBoardAdapter(this, boardSize, randomizedImages,
+        adapter = MemoryBoardAdapter(this, boardSize, memoryGame.cards,
             object : MemoryBoardAdapter.CardClickListener {
                 override fun onCardClick(position: Int) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Hi There I am on$position",
-                        Toast.LENGTH_SHORT
-                    ).show()
-//                    updateCardFlip(position)
+                    Log.d("tag", "Hi I am from $position")
+                    updateGameFlip(position)
                 }
             })
         rvBoard.adapter = adapter
         rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
         rvBoard.hasFixedSize()
 
-
     }
 
-    private fun updateCardFlip(position: Int) {
-
+    private fun updateGameFlip(position: Int) {
+        memoryGame.flipCard(position)
+        adapter.notifyDataSetChanged()
     }
 
     private fun setViews() {
@@ -64,6 +60,5 @@ class MainActivity : AppCompatActivity() {
         tvNumMoves = findViewById(R.id.tvNumMoves)
         tvNumPairs = findViewById(R.id.tvNumPairs)
         setRecyclerView()
-
     }
 }
