@@ -37,8 +37,8 @@
                     android:gravity="center"
                     android:padding="8dp"
                     android:text="Pairs: 0 / 4"
-                    android:textColor="@color/teal_700"
-                    android:fontFamily="sans-serif-condensed-medium"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-smallcaps"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
             </androidx.cardview.widget.CardView>
 
@@ -56,8 +56,8 @@
                     android:gravity="center"
                     android:padding="8dp"
                     android:text="Moves: 0"
-                    android:textColor="@color/teal_700"
-                    android:fontFamily="sans-serif-condensed-medium"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-smallcaps"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
             </androidx.cardview.widget.CardView>
 
