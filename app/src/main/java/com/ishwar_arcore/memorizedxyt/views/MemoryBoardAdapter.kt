@@ -32,19 +32,18 @@ class MemoryBoardAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val cardWidth = parent.width / boardSize.getWidth() - (2 * MARGIN_SIZE)
-        val cardHeight = parent.height / boardSize.getHeight() - (2 * MARGIN_SIZE)
+        val cardWidth = parent.width / boardSize.getWidth() - 2 * MARGIN_SIZE
+        val cardHeight = parent.height / boardSize.getHeight() - 2 * MARGIN_SIZE
         val cardSideLength = min(cardWidth, cardHeight)
-
         val view = LayoutInflater.from(context).inflate(R.layout.memory_card, parent, false)
-
         val layoutParams =
             view.findViewById<CardView>(R.id.cardView).layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.width = cardSideLength
         layoutParams.height = cardSideLength
         layoutParams.setMargins(MARGIN_SIZE, MARGIN_SIZE, MARGIN_SIZE, MARGIN_SIZE)
-
+        // Set the appropriate width/height of the view
         return MyViewHolder(view)
+
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
