@@ -1,42 +1,45 @@
 package com.ishwar_arcore.memorizedxyt.views
 
 import android.animation.ArgbEvaluator
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.graphics.Color
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.jinatonic.confetti.CommonConfetti
 import com.google.android.material.snackbar.Snackbar
 import com.ishwar_arcore.memorizedxyt.R
 import com.ishwar_arcore.memorizedxyt.model.BoardSize
 import com.ishwar_arcore.memorizedxyt.model.MemoryGame
 
-class MainActivity : AppCompatActivity() {
 
+class MainActivity : AppCompatActivity() {
     private lateinit var clRoot: CoordinatorLayout
     private lateinit var rvBoard: RecyclerView
     private lateinit var tvNumMoves: TextView
     private lateinit var tvNumPairs: TextView
 
+    //    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var audioManager: AudioManager
+
     private lateinit var adapter: MemoryBoardAdapter
     private lateinit var memoryGame: MemoryGame
-
 
     private var boardSize: BoardSize = BoardSize.EASY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setViews()
     }
 
@@ -112,6 +115,10 @@ class MainActivity : AppCompatActivity() {
         rvBoard = findViewById(R.id.rvBoard)
         tvNumMoves = findViewById(R.id.tvNumMoves)
         tvNumPairs = findViewById(R.id.tvNumPairs)
+//        mediaPlayer = MediaPlayer.create(this, R.raw.)
+
+        audioManager = this.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
         setUpBoard()
     }
 
@@ -138,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         adapter = MemoryBoardAdapter(this, boardSize, memoryGame.cards,
             object : MemoryBoardAdapter.CardClickListener {
                 override fun onCardClick(position: Int) {
-                    Log.d("tag", "Hi I am from $position")
+                    audioManager.playSoundEffect(SoundEffectConstants.CLICK)
                     updateGameFlip(position)
                 }
             })
@@ -168,11 +175,31 @@ class MainActivity : AppCompatActivity() {
             ) as Int
             tvNumPairs.setTextColor(color)
             if (memoryGame.haveWonTehGame()) {
+                showConfetti()
                 Snackbar.make(clRoot, "You won! Congratulations", Snackbar.LENGTH_LONG).show()
             }
         }
         tvNumMoves.text = "Moves: ${memoryGame.getNumMoves()}"
         adapter.notifyDataSetChanged()
+    }
+
+    private fun showConfetti() {
+
+        CommonConfetti.rainingConfetti(
+            clRoot, intArrayOf(
+                Color.BLUE,
+                Color.WHITE,
+                Color.RED,
+                Color.YELLOW,
+                Color.MAGENTA,
+                Color.CYAN,
+                Color.GREEN,
+                Color.DKGRAY
+            )
+        ).oneShot()
+            .setVelocityX(5000f)
+            .setEmissionDuration(1000)
+
     }
 
 }
